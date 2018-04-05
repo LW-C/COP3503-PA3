@@ -11,8 +11,21 @@ private:
     std::vector<std::string> constants;
     std::vector<std::string> operators;
     std::vector<std::string> delimiteres;
+    std::vector<std::string> syntaxErrors;
 public:
-    void push(std::string);
-    std::string pop(int);
-    std::string pop(std::string);
+    void push(std::string);             //Calls the other methods to push a string to the end of the appropriate vector
+    void pushKeyword(std::string);
+    void pushIdentifier(std::string);
+    void pushConstant(std::string);
+    void pushOperator(std::string);
+    void pushDelimiter(std::string);
+    void pushSyntaxError(std::string);
+    std::string pop();                  //Calls the other methods to pop a string from the end of the appropriate vector
+                                        //Is this method necessary?
+    std::string popKeyword();
+    std::string popIdentifier();
+    std::string popConstant();
+    std::string popOperator();
+    std::string popDelimiter();
+    std::string popSyntaxtError();
 };
