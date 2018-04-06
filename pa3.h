@@ -13,6 +13,7 @@ private:
     std::vector<std::string> delimiteres;
     std::vector<std::string> syntaxErrors;
 public:
+    Stack();
     void push(std::string);             //Calls the other methods to push a string to the end of the appropriate vector
     void pushKeyword(std::string);
     void pushIdentifier(std::string);
@@ -27,5 +28,11 @@ public:
     std::string popConstant();
     std::string popOperator();
     std::string popDelimiter();
-    std::string popSyntaxtError();
+    std::string popSyntaxError();
+    int getKeywordSize();
+    int getIdentifierSize();
+    int getConstantSize();
+    int getOperatorSize();
+    int getDelimiterSize();
+    int getSyntaxErrorSize();
 };
