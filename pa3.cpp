@@ -30,6 +30,24 @@ void readFile(std::ifstream)
     // Check shunting-yard algorithm on Wikipedia
 }
 
+void printOutput(int depth, Stack* theStack)
+{
+    std::cout << "OUTPUT> The depth of nested loop(s) is ";
+    std::cout << depth << "\n";
+
+    std::cout << "Keywords: ";
+    //
+    std::cout << "Identifiers: ";
+    //
+    std::cout << "Constants: ";
+    //
+    std::cout << "Operators: ";
+    //
+    std::cout << "Delimiters: ";
+    //
+    std::cout << "Syntax Error(s): ";
+}
+
 int main() {
     // Call getFile
     /*
