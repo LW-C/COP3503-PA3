@@ -34,9 +34,16 @@ void printOutput(int depth, Stack* theStack)
 {
     std::cout << "OUTPUT> The depth of nested loop(s) is ";
     std::cout << depth << "\n";
-
     std::cout << "Keywords: ";
-    //
+    if(theStack->getKeywordSize() == 0)
+        std::cout << "NA";
+    else{
+        for(int i = 0; i<theStack->getKeywordSize(); i++)
+        {
+            std::cout << theStack->popKeyword() << " ";
+        }
+    }
+    std::cout"\n";
     std::cout << "Identifiers: ";
     //
     std::cout << "Constants: ";
