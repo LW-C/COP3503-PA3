@@ -3,6 +3,7 @@
 class Stack
 {
 private:
+    int depth;
     const std::string KEYWORDSlist[3] = {"BEGIN", "END", "FOR"};
     const std::string OPERATORSlist[7] = {"+", "-", "*", "/", "++", "=", "=="};
     const std::string DELIMITERSlist[2] = {",", ";"};
@@ -14,6 +15,8 @@ private:
     std::vector<std::string> syntaxErrors;
 public:
     Stack();
+    void addDepth();
+    int getDepth();
     void push(std::string a);             //Calls the other methods to push a string to the end of the appropriate vector
     void pushKeyword(std::string a);
     void pushIdentifier(std::string a);
@@ -21,8 +24,6 @@ public:
     void pushOperator(std::string a);
     void pushDelimiter(std::string a);
     void pushSyntaxError(std::string a);
-    /*std::string pop();                  //Calls the other methods to pop a string from the end of the appropriate vector
-                                        //Is this method necessary?*/
     std::string popKeyword();
     std::string popIdentifier();
     std::string popConstant();
@@ -35,4 +36,10 @@ public:
     int getOperatorSize();
     int getDelimiterSize();
     int getSyntaxErrorSize();
+};
+
+class PA3
+{
+public:
+    static void printOutput(Stack * theStack);
 };

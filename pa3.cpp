@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include "pa3.h"
+#include <ios>
 #include <fstream>
 
 /*
@@ -13,107 +14,16 @@
  *  will open and read the file.
  */
 
-std::ifstream getFile()
+Stack::Stack() = default;
+
+void Stack::addDepth()
 {
-    /*
-     *  This method will get the file name from the user.
-     *  The main method will check to see if it is a
-     *  valid file.
-     */
+    depth++;
 }
 
-void readFile(std::ifstream)
+int Stack::getDepth()
 {
-    /*
-     *  This method will read the file that was opened
-     *  in the openFile method. It will call push
-     *  methods from the Stack class to add the input to
-     *  the Stack.
-     */
-    // Check shunting-yard algorithm on Wikipedia
-}
-
-void printOutput(int depth, Stack* theStack)
-{
-    // Depth
-    std::cout << "OUTPUT> The depth of nested loop(s) is ";
-    std::cout << depth << "\n";
-
-    // Keywords
-    std::cout << "Keywords: ";
-    if(theStack->getKeywordSize() == 0)
-        std::cout << "NA";
-    else{
-        for(int i = 0; i<theStack->getKeywordSize(); i++)
-        {
-            std::cout << theStack->popKeyword() << " ";
-        }
-    }
-    std::cout << "\n";
-
-    // Identifiers
-    std::cout << "Identifiers: ";
-    if(theStack->getIdentifierSize() == 0)
-        std::cout << "NA";
-    else{
-        for(int i = 0; i<theStack->getIdentifierSize(); i++)
-        {
-            std::cout << theStack->popIdentifier() << " ";
-        }
-    }
-    std::cout << "\n";
-
-    // Constants
-    std::cout << "Constants: ";
-    if(theStack->getConstantSize() == 0)
-        std::cout << "NA";
-    else{
-        for(int i = 0; i<theStack->getConstantSize(); i++)
-        {
-            std::cout << theStack->popConstant() << " ";
-        }
-    }
-    std::cout << "\n";
-
-    // Operators
-    std::cout << "Operators: ";
-    if(theStack->getOperatorSize() == 0)
-        std::cout << "NA";
-    else{
-        for(int i = 0; i<theStack->getOperatorSize(); i++)
-        {
-            std::cout << theStack->popOperator() << " ";
-        }
-    }
-    std::cout << "\n";
-
-    //Delimiters
-    std::cout << "Delimiters: ";
-    if(theStack->getDelimiterSize() == 0)
-        std::cout << "NA";
-    else{
-        for(int i = 0; i<theStack->getDelimiterSize(); i++)
-        {
-            std::cout << theStack->popDelimiter() << " ";
-        }
-    }
-    std::cout << "\n";
-
-    // Syntax Errors
-    std::cout << "Syntax Error(s): ";
-    if(theStack->getSyntaxErrorSize() == 0)
-        std::cout << "NA";
-    else{
-        for(int i = 0; i<theStack->getSyntaxErrorSize(); i++)
-        {
-            std::cout << theStack->popSyntaxError() << " ";
-        }
-    }
-    std::cout << "\n";
-}
-
-Stack::Stack()
-{
+    return depth;
 }
 
 void Stack::push(std::string a)
@@ -226,16 +136,126 @@ int Stack::getSyntaxErrorSize()
     return static_cast<int>(syntaxErrors.size());
 }
 
-int main() {
-    // Call getFile
+/*static void PA3::printOutput(Stack * theStack)
+{
+    // Depth
+    std::cout << "OUTPUT> The depth of nested loop(s) is ";
+    std::cout << depth << "\n";
+
+    // Keywords
+    std::cout << "Keywords: ";
+    if (theStack->getKeywordSize() == 0)
+        std::cout << "NA";
+    else {
+        for (int i = 0; i < theStack->getKeywordSize(); i++) {
+            std::cout << theStack->popKeyword() << " ";
+        }
+    }
+    std::cout << "\n";
+
+    // Identifiers
+    std::cout << "Identifiers: ";
+    if (theStack->getIdentifierSize() == 0)
+        std::cout << "NA";
+    else {
+        for (int i = 0; i < theStack->getIdentifierSize(); i++) {
+            std::cout << theStack->popIdentifier() << " ";
+        }
+    }
+    std::cout << "\n";
+
+    // Constants
+    std::cout << "Constants: ";
+    if (theStack->getConstantSize() == 0)
+        std::cout << "NA";
+    else {
+        for (int i = 0; i < theStack->getConstantSize(); i++) {
+            std::cout << theStack->popConstant() << " ";
+        }
+    }
+    std::cout << "\n";
+
+    // Operators
+    std::cout << "Operators: ";
+    if (theStack->getOperatorSize() == 0)
+        std::cout << "NA";
+    else {
+        for (int i = 0; i < theStack->getOperatorSize(); i++) {
+            std::cout << theStack->popOperator() << " ";
+        }
+    }
+    std::cout << "\n";
+
+    //Delimiters
+    std::cout << "Delimiters: ";
+    if (theStack->getDelimiterSize() == 0)
+        std::cout << "NA";
+    else {
+        for (int i = 0; i < theStack->getDelimiterSize(); i++) {
+            std::cout << theStack->popDelimiter() << " ";
+        }
+    }
+    std::cout << "\n";
+
+    // Syntax Errors
+    std::cout << "Syntax Error(s): ";
+    if (theStack->getSyntaxErrorSize() == 0)
+        std::cout << "NA";
+    else {
+        for (int i = 0; i < theStack->getSyntaxErrorSize(); i++) {
+            std::cout << theStack->popSyntaxError() << " ";
+        }
+    }
+    std::cout << "\n";
+}
+*/
+/*
+ *  Main will get the file name from the user.
+ *  It will the check to see if it is a valid file.
+ *  If it is, it will continue. Otherwise, it will
+ *  give an error and terminate the program. It then
+ *  reads the file that was opened and calls the push
+ *  method from the Stack class to add the input to
+ *  the Stack.
+ */
+int main()
+{
+    // Get the file from the user
+    std::string fn;
+    std::cout << "INPUT> Please enter the name of the input file:\n";
+    std::cin >> fn;
+    std::ifstream theFile(fn);
+
+    // Check to see if the file is valid.
+    if(!theFile)
+    {
+        std::cerr << "The file could not be opened\n";
+        return 1;
+    }
+
+    // Read the file to the Stack
+    Stack * theStack = new Stack();
+    // The while loop checks to see if there is something
+    // else to read from the file.
+    std::string toPush;
+    std::string aLine;
+    while(getline(theFile, aLine))
+    {
+        std::cout << aLine << "\n";
+    }
+
+    // Closing the file
+    theFile.close();
+
+    // Printing the output
+    //PA3::printOutput(theStack);
+
     /*
-     *  Check to see if the file is valid. If it is,
-     *  continue. Otherwise, give an error and terminate
-     *  the program.
+     *  Testing:
+     *  Stack *theStack = new Stack();
+     *  theStack->pushKeyword("Test");
+     *  std::cout << theStack->popKeyword();
      */
-    // Call readFile
-    Stack* theStack = new Stack();
-    theStack->pushKeyword("Test");
-    theStack->popKeyword();
+
     return 0;
 }
