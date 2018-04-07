@@ -5,8 +5,10 @@
 
 #include <iostream>
 #include "pa3.h"
-#include <ios>
 #include <fstream>
+#include <stdio.h>
+#include <string.h>
+#include <string>
 
 /*
  *  Open the file reading class in the main method
@@ -32,6 +34,7 @@ void Stack::push(std::string a)
      *  This method will check to see which
      *  vector the string belongs in.
      */
+    std::cout << a << "\n";
 }
 
 void Stack::pushKeyword(std::string a)
@@ -237,11 +240,23 @@ int main()
     Stack * theStack = new Stack();
     // The while loop checks to see if there is something
     // else to read from the file.
-    std::string toPush;
-    std::string aLine;
-    while(getline(theFile, aLine))
+    std::string toPush = "";
+    std::string theWord = " ";
+    while(theFile >> theWord)
     {
-        std::cout << aLine << "\n";
+        //std::cout << aLine << "\n";
+        char c;
+        int i=0;
+        char str[] = {};
+        std::string aWord = theWord;
+        strcpy(str, aWord.c_str());     //This line causes an error because it deletes the reference and the next time around it gives a seg fault
+        while(str[i])
+        {
+            c = str[i];
+            toPush.push_back(c);
+            i++;
+        }
+        theStack->push(toPush);
     }
 
     // Closing the file
