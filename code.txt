@@ -1,1 +1,4 @@
-This wil be the file to test the program
+This wil be the file to test the program.
+Line 2
+Line 3
+Line 4
