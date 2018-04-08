@@ -9,7 +9,6 @@ private:
     bool lastIsFor = false;
     bool beginTypo = false;
     bool endTypo = false;
-    bool forTypo = false;
     int numBegin = 0;
     int numEnd = 0;
     int numFor = 0;

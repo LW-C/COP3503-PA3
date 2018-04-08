@@ -30,7 +30,7 @@ void Stack::calcDepth()
     if(numEnd > max)
         max = numEnd;
     int min = max;
-    if((numFor < max) && !(forTypo))
+    if((numFor < max))
         Stack::pushSyntaxError("FOR");
     if(numFor < min)
         min = numFor;
@@ -163,7 +163,7 @@ void Stack::push(std::string a)
         }
 
         // Check to see is the string is a typo
-        else if(a.size() == 3)
+        else if((a.size() == 3) && ((a[1] == 'e') || (a[1] == 'E')))
         {
             bool typo = true;
             for(int i = 0; i < a.size(); i++)
@@ -177,15 +177,12 @@ void Stack::push(std::string a)
             if(typo)
             {
                 Stack::pushSyntaxError(a);
-                if((a[1] == 'f') || a[1] == 'F')
-                    forTypo = true;
-                else if((a[1] == 'e') || a[1] == 'E')
-                    endTypo = true;
+                endTypo = true;
             }
             else
                 Stack::pushIdentifier(a);
         }
-        else if(a.size() == 5)
+        else if((a.size() == 5) && ((a[1] == 'b') || (a[1] == 'B')))
         {
             bool typo = true;
             for(int i = 0; i < a.size(); i++)
@@ -204,6 +201,7 @@ void Stack::push(std::string a)
             else
                 Stack::pushIdentifier(a);
         }
+
         // Check to see if the string is an identifier
         else
         {
