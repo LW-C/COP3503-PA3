@@ -59,104 +59,185 @@ int Stack::getDepth()
  */
 void Stack::push(std::string a)
 {
-    // Check to see if the string is a constant
-    bool isNotNum = false;
-    for(int i = 0; i < a.length(); i++)
+    /*
+     *  This section checks the strings that have
+     *  a length greater than one. This may include
+     *  strings that contain other strings, like
+     *  operators, constants or delimiters.
+     */
+    if(a.size() > 1)
     {
-        if(!(isdigit(a[i])))
+        // Check to see if the string is a constant
+        bool isNotNum = false;
+        for(int i = 0; i < a.length(); i++)
         {
-            isNotNum = true;
-            break;
+            if(!(isdigit(a[i])))
+            {
+                isNotNum = true;
+                break;
+            }
+        }
+        if(!isNotNum)
+        {
+            Stack::pushConstant(a);
+            if(lastIsFor)
+            {
+                lastIsFor = false;
+                Stack::pushSyntaxError("(");
+                depth--;
+            }
+        }
+            // Check to see if the string is a keyword
+        else if((a.compare("FOR") == 0) || (a.compare("For") == 0) || (a.compare("for") == 0))
+        {
+            Stack::pushKeyword(a);
+            lastIsFor = true;
+            numFor++;
+        }
+        else if((a.compare("BEGIN") == 0) || (a.compare("Begin") == 0) || (a.compare("begin") == 0))
+        {
+            // Check to see if there is a )
+            if(!hasCloseParen) {
+                Stack::pushSyntaxError(")");
+                depth--;
+            }
+            hasCloseParen = false;
+            Stack::pushKeyword(a);
+            lastIsFor = false;
+            numBegin++;
+        }
+        else if((a.compare("END") == 0) || (a.compare("End") == 0) || (a.compare("end") == 0))
+        {
+            Stack::pushKeyword(a);
+            lastIsFor = false;
+        }
+
+        // Check to see if the string is an operator
+        else if((a.compare("++") == 0) || (a.compare("--") == 0)
+                || (a.compare("==") == 0) || (a.compare("!=") == 0))
+        {
+            Stack::pushOperator(a);
+            if(lastIsFor)
+            {
+                lastIsFor = false;
+                Stack::pushSyntaxError("(");
+                depth--;
+            }
+        }
+
+        // Check to see if the string contains a another string (delimiter, constant, etc.)
+        else if((a.find(";") != -1) || (a.find(")") != -1))
+        {
+            Stack::push(a.substr(0, a.size()-1));
+            Stack::push(a.substr(a.size()-1, 1));
+        }
+        else if(a.find("(") != -1)
+        {
+            Stack::push(a.substr(0, 1));
+            Stack::push(a.substr(1, a.size()-1));
+        }
+        else if(a.find(",") != -1)
+        {
+            Stack::push(a.substr(0, a.size()-1));
+            Stack::push(a.substr(a.size()-1, 1));
+        }
+        else if(a.find("=") != -1)
+        {
+            int find = a.find("=");
+            if(find == 0)
+            {
+                Stack::push(a.substr(0, 1));
+                Stack::push(a.substr(1, a.size()-1));
+            }
+            else if(find == a.size() -1)
+            {
+                Stack::push(a.substr(0, a.size()-1));
+                Stack::push(a.substr(a.size()-1, 1));
+            }
+            else
+            {
+                Stack::push(a.substr(0, (-1)*(find-a.size())));
+                Stack::push(a.substr(find, 1));
+                Stack::push(a.substr(find+1, a.size()-find));
+            }
+        }
+        // Check to see if the string is an identifier
+        else
+        {
+            Stack::pushIdentifier(a);
+            if(lastIsFor)
+            {
+                lastIsFor = false;
+                Stack::pushSyntaxError("(");
+                depth--;
+            }
         }
     }
-    if(!isNotNum)
-    {
-        Stack::pushConstant(a);
-        if(lastIsFor)
+
+    /*
+     *  This section checks the strings that have a length
+     *  of one. These will not include any strings that
+     *  could contain an operator, constant or delimiter.
+     */
+    else {
+        // Check to see if the string is a constant
+        if (isdigit(a[0])) {
+            Stack::pushConstant(a);
+            if (lastIsFor) {
+                lastIsFor = false;
+                Stack::pushSyntaxError("(");
+                depth--;
+            }
+        }
+
+        // Check to see if the string is a paren
+        else if(a.compare("(") == 0)
         {
             lastIsFor = false;
-            Stack::pushSyntaxError("(");
-            depth--;
+            hasOpenParen = true;
         }
-    }
-
-    // Check to see if the string is a paren
-    else if(a.compare("(") == 0)
-    {
-        lastIsFor = false;
-        hasOpenParen = true;
-    }
-    else if(a.compare(")") == 0)
-    {
-        if(!hasOpenParen){
-            Stack::pushSyntaxError(a);
-            depth--;
-        }
-        if(hasCloseParen){
-            Stack::pushSyntaxError(a);
-            depth--;
-        }
-        hasCloseParen = true;
-    }
-
-    // Check to see if the string is a delimiter
-    else if((a.compare(";") == 0) || (a.compare(",") == 0))
-    {
-        Stack::pushDelimiter(a);
-    }
-
-    // Check to see if the string is an operator
-    else if((a.compare("+") == 0) || (a.compare("-") == 0) || (a.compare("*") == 0)
-            || (a.compare("/") == 0) || (a.compare("%") == 0)
-            || (a.compare("++") == 0) || (a.compare("--") == 0)
-            || (a.compare("==") == 0) || (a.compare("!=") == 0))
-    {
-        Stack::pushOperator(a);
-        if(lastIsFor)
+        else if(a.compare(")") == 0)
         {
-            lastIsFor = false;
-            Stack::pushSyntaxError("(");
-            depth--;
+            if(!hasOpenParen){
+                Stack::pushSyntaxError(a);
+                depth--;
+            }
+            if(hasCloseParen){
+                Stack::pushSyntaxError(a);
+                depth--;
+            }
+            hasCloseParen = true;
         }
-    }
 
-    // Check to see if the string is a keyword
-    else if((a.compare("FOR") == 0) || (a.compare("For") == 0) || (a.compare("for") == 0))
-    {
-        Stack::pushKeyword(a);
-        lastIsFor = true;
-        numFor++;
-    }
-    else if((a.compare("BEGIN") == 0) || (a.compare("Begin") == 0) || (a.compare("begin") == 0))
-    {
-        // Check to see if there is a )
-        if(!hasCloseParen) {
-            Stack::pushSyntaxError(")");
-            depth--;
-        }
-        hasCloseParen = false;
-        Stack::pushKeyword(a);
-        lastIsFor = false;
-        numBegin++;
-    }
-    else if((a.compare("END") == 0) || (a.compare("End") == 0) || (a.compare("end") == 0))
-    {
-        Stack::pushKeyword(a);
-        lastIsFor = false;
-    }
-
-    // Check to see if the string is a syntax error
-    //??
-
-    // Check to see if the string is an identifier
-    else
-    {
-        Stack::pushIdentifier(a);
-        if(lastIsFor)
+        // Check to see if the string is a delimiter
+        else if((a.compare(";") == 0) || (a.compare(",") == 0))
         {
-            lastIsFor = false;
-            Stack::pushSyntaxError("(");
-            depth--;
+            Stack::pushDelimiter(a);
+        }
+
+        // Check to see if the string is an operator
+        else if((a.compare("+") == 0) || (a.compare("-") == 0) || (a.compare("*") == 0)
+                || (a.compare("/") == 0) || (a.compare("%") == 0) || (a.compare("=") == 0))
+        {
+            Stack::pushOperator(a);
+            if(lastIsFor)
+            {
+                lastIsFor = false;
+                Stack::pushSyntaxError("(");
+                depth--;
+            }
+        }
+
+        // Check to see if the string is an identifier
+        else
+        {
+            Stack::pushIdentifier(a);
+            if(lastIsFor)
+            {
+                lastIsFor = false;
+                Stack::pushSyntaxError("(");
+                depth--;
+            }
         }
     }
 }
@@ -337,14 +418,6 @@ int main()
     std::string theWord = " ";
     while(theFile >> theWord)
     {
-        std::cout << theWord << "\n";
-        /*char c;
-        for(int j = 0; j < theWord.size(); j++)
-        {
-            c = theWord[j];
-            toPush.push_back(c);
-        }*/
-        //theStack->push(toPush);
         theStack->push(theWord);
     }
 
