@@ -339,15 +339,10 @@ int main()
     {
         //std::cout << aLine << "\n";
         char c;
-        int i=0;
-        char str[] = {};
-        std::string aWord = theWord;
-        strcpy(str, aWord.c_str());     //This line causes an error because it deletes the reference and the next time around it gives a seg fault
-        while(str[i])
+        for(int j = 0; j < theWord.size(); j++)
         {
-            c = str[i];
+            c = theWord[j];
             toPush.push_back(c);
-            i++;
         }
         theStack->push(toPush);
     }
