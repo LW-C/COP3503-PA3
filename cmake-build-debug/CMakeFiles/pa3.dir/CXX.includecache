@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/cygdrive/c/Users/laure/CLionProjects/pa3/pa3.cpp
+iostream
+-
+pa3.h
+/cygdrive/c/Users/laure/CLionProjects/pa3/pa3.h
+fstream
+-
+stdio.h
+-
+string.h
+-
+string
+-
+stdlib.h
+-
+ctype.h
+-
+
+/cygdrive/c/Users/laure/CLionProjects/pa3/pa3.h
+vector
+-
+
