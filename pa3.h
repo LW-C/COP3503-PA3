@@ -4,9 +4,9 @@ class Stack
 {
 private:
     int depth;
-    const std::string KEYWORDSlist[3] = {"BEGIN", "END", "FOR"};
-    const std::string OPERATORSlist[7] = {"+", "-", "*", "/", "++", "=", "=="};
-    const std::string DELIMITERSlist[2] = {",", ";"};
+    //const std::string KEYWORDSlist[3] = {"BEGIN", "END", "FOR"};
+    //const std::string OPERATORSlist[7] = {"+", "-", "*", "/", "++", "=", "=="};
+    //const std::string DELIMITERSlist[2] = {",", ";"};
     std::vector<std::string> keywords;
     std::vector<std::string> identifiers;
     std::vector<std::string> constants;
