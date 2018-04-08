@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <string>
+#include <stdlib.h>
+#include <ctype.h>
 
 /*
  *  Open the file reading class in the main method
@@ -28,42 +30,132 @@ int Stack::getDepth()
     return depth;
 }
 
+/*
+ *  push will check to see which
+ *  vector the string belongs in.
+ */
 void Stack::push(std::string a)
 {
-    /*
-     *  This method will check to see which
-     *  vector the string belongs in.
-     */
-    std::cout << a << "\n";
+    //bool hasAParen = false;
+    //int hasBegin = 0;
+
+    // Check to see if the string is a constant
+    bool isNotNum = false;
+    for(int i = 0; i < a.length(); i++)
+    {
+        if(!(isdigit(a[i])))
+        {
+            isNotNum = true;
+            break;
+        }
+    }
+    if(!isNotNum)
+    {
+        Stack::pushConstant(a);
+    }
+
+    // Check to see if the string is a delimiter
+    else if((a.compare(";") == 0) || (a.compare(",") == 0))
+    {
+        Stack::pushDelimiter(a);
+    }
+
+    // Check to see if the string is an operator
+    else if((a.compare("+") == 0) || (a.compare("-") == 0) || (a.compare("*") == 0)
+            || (a.compare("/") == 0) || (a.compare("%") == 0)
+            || (a.compare("++") == 0) || (a.compare("--") == 0)
+            || (a.compare("==") == 0) || (a.compare("!=") == 0))
+    {
+        Stack::pushOperator(a);
+    }
+
+    // Check to see if the string is a keyword
+    else if((a.compare("FOR") == 0) || (a.compare("For") == 0) || (a.compare("for") == 0)
+            || (a.compare("BEGIN") == 0) || (a.compare("Begin") == 0) || (a.compare("begin") == 0)
+            || (a.compare("END") == 0) || (a.compare("End") == 0) || (a.compare("end") == 0))
+    {
+        Stack::pushKeyword(a);
+    }
+
+    // Check to see if the string is a syntax error
+    //??
+
+    // Check to see if the string is an identifier
+    else
+    {
+        Stack::pushIdentifier(a);
+    }
 }
 
 void Stack::pushKeyword(std::string a)
 {
+    for(int i = 0; i < keywords.size(); ++i)
+    {
+        if(a.compare(keywords[i]) == 0)
+        {
+            return;
+        }
+    }
     keywords.push_back(a);
 }
 
 void Stack::pushIdentifier(std::string a)
 {
+    for(int i = 0; i < identifiers.size(); ++i)
+    {
+        if(a.compare(identifiers[i]) == 0)
+        {
+            return;
+        }
+    }
     identifiers.push_back(a);
 }
 
 void Stack::pushConstant(std::string a)
 {
+    for(int i = 0; i < constants.size(); ++i)
+    {
+        if(a.compare(constants[i]) == 0)
+        {
+            return;
+        }
+    }
     constants.push_back(a);
 }
 
 void Stack::pushOperator(std::string a)
 {
+    for(int i = 0; i < operators.size(); ++i)
+    {
+        if(a.compare(operators[i]) == 0)
+        {
+            return;
+        }
+    }
     operators.push_back(a);
 }
 
 void Stack::pushDelimiter(std::string a)
 {
+    for(int i = 0; i < delimiters.size(); ++i)
+    {
+        if(a.compare(delimiters[i]) == 0)
+        {
+            return;
+        }
+    }
     delimiters.push_back(a);
 }
 
 void Stack::pushSyntaxError(std::string a)
 {
+    for(int i = 0; i < syntaxErrors.size(); ++i)
+    {
+        if(a.compare(syntaxErrors[i]) == 0)
+        {
+            return;
+        }
+    }
     syntaxErrors.push_back(a);
 }
 
