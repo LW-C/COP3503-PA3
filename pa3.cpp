@@ -68,7 +68,8 @@ void Stack::push(std::string a)
     {
         // Check to see if the string is a constant
         bool isNotNum = false;
-        for(int i = 0; i < a.length(); i++)
+        int j = a.size();
+        for(int i = 0; i < j; i++)
         {
             if(!(isdigit(a[i])))
             {
@@ -85,6 +86,7 @@ void Stack::push(std::string a)
                 Stack::pushSyntaxError("(");
                 //depth--;
             }
+            return;
         }
             // Check to see if the string is a keyword
         else if((a.compare("FOR") == 0) || (a.compare("For") == 0) || (a.compare("for") == 0))
@@ -92,6 +94,7 @@ void Stack::push(std::string a)
             Stack::pushKeyword(a);
             lastIsFor = true;
             numFor++;
+            return;
         }
         else if((a.compare("BEGIN") == 0) || (a.compare("Begin") == 0) || (a.compare("begin") == 0))
         {
@@ -104,12 +107,14 @@ void Stack::push(std::string a)
             Stack::pushKeyword(a);
             lastIsFor = false;
             numBegin++;
+            return;
         }
         else if((a.compare("END") == 0) || (a.compare("End") == 0) || (a.compare("end") == 0))
         {
             Stack::pushKeyword(a);
             lastIsFor = false;
             ++numEnd;
+            return;
         }
 
         // Check to see if the string is an operator
@@ -123,33 +128,40 @@ void Stack::push(std::string a)
                 Stack::pushSyntaxError("(");
                 //depth--;
             }
+            return;
         }
 
         // Check to see if the string contains a another string (delimiter, constant, etc.)
-        else if((a.find(";") != -1) || (a.find(")") != -1))
+        int x = a.find(";");
+        int y = a.find(")");
+        int z = a.find("(");
+        int xx = a.find(",");
+        int yy = a.find("=");
+        if((x != -1) || (y != -1))
         {
             Stack::push(a.substr(0, a.size()-1));
             Stack::push(a.substr(a.size()-1, 1));
         }
-        else if(a.find("(") != -1)
+        else if(z != -1)
         {
             Stack::push(a.substr(0, 1));
             Stack::push(a.substr(1, a.size()-1));
         }
-        else if(a.find(",") != -1)
+        else if(xx != -1)
         {
             Stack::push(a.substr(0, a.size()-1));
             Stack::push(a.substr(a.size()-1, 1));
         }
-        else if(a.find("=") != -1)
+        else if(yy != -1)
         {
             int find = a.find("=");
+            int last = a.size() - 1;
             if(find == 0)
             {
                 Stack::push(a.substr(0, 1));
                 Stack::push(a.substr(1, a.size()-1));
             }
-            else if(find == a.size() -1)
+            else if(find == last)
             {
                 Stack::push(a.substr(0, a.size()-1));
                 Stack::push(a.substr(a.size()-1, 1));
@@ -163,10 +175,10 @@ void Stack::push(std::string a)
         }
 
         // Check to see is the string is a typo
-        else if((a.size() == 3) && ((a[1] == 'e') || (a[1] == 'E')))
+        else if((a.size() == 3))
         {
             bool typo = true;
-            for(int i = 0; i < a.size(); i++)
+            for(int i = 0; i < j; i++)
             {
                 if(!(isupper(a[i])))
                 {
@@ -182,10 +194,10 @@ void Stack::push(std::string a)
             else
                 Stack::pushIdentifier(a);
         }
-        else if((a.size() == 5) && ((a[1] == 'b') || (a[1] == 'B')))
+        else if((a.size() == 5))
         {
             bool typo = true;
-            for(int i = 0; i < a.size(); i++)
+            for(int i = 0; i < j; i++)
             {
                 if(!(isupper(a[i])))
                 {
@@ -217,7 +229,7 @@ void Stack::push(std::string a)
 
     /*
      *  This section checks the strings that have a length
-     *  of one. These will not include any strings that
+     *  of 1. These will not include any strings that
      *  could contain an operator, constant or delimiter.
      */
     else {
@@ -286,7 +298,8 @@ void Stack::push(std::string a)
 void Stack::pushKeyword(std::string a)
 {
     if(keywords.size() > 0) {
-        for (int i = 0; i < keywords.size(); ++i) {
+        int j = keywords.size();
+        for (int i = 0; i < j; ++i) {
             if (a.compare(keywords[i]) == 0) {
                 return;
             }
@@ -297,11 +310,12 @@ void Stack::pushKeyword(std::string a)
 
 void Stack::pushIdentifier(std::string a)
 {
-    for(int i = 0; i < identifiers.size(); ++i)
-    {
-        if(a.compare(identifiers[i]) == 0)
-        {
-            return;
+    if(identifiers.size() > 0) {
+        int j = identifiers.size();
+        for (int i = 0; i < j; ++i) {
+            if (a.compare(identifiers[i]) == 0) {
+                return;
+            }
         }
     }
     identifiers.push_back(a);
@@ -309,11 +323,12 @@ void Stack::pushIdentifier(std::string a)
 
 void Stack::pushConstant(std::string a)
 {
-    for(int i = 0; i < constants.size(); ++i)
-    {
-        if(a.compare(constants[i]) == 0)
-        {
-            return;
+    if(constants.size() > 0) {
+        int j = constants.size();
+        for (int i = 0; i < j; ++i) {
+            if (a.compare(constants[i]) == 0) {
+                return;
+            }
         }
     }
     constants.push_back(a);
@@ -321,11 +336,12 @@ void Stack::pushConstant(std::string a)
 
 void Stack::pushOperator(std::string a)
 {
-    for(int i = 0; i < operators.size(); ++i)
-    {
-        if(a.compare(operators[i]) == 0)
-        {
-            return;
+    if(operators.size() > 0) {
+        int j = operators.size();
+        for (int i = 0; i < j; ++i) {
+            if (a.compare(operators[i]) == 0) {
+                return;
+            }
         }
     }
     operators.push_back(a);
@@ -333,11 +349,12 @@ void Stack::pushOperator(std::string a)
 
 void Stack::pushDelimiter(std::string a)
 {
-    for(int i = 0; i < delimiters.size(); ++i)
-    {
-        if(a.compare(delimiters[i]) == 0)
-        {
-            return;
+    if(delimiters.size() > 0) {
+        int j = delimiters.size();
+        for (int i = 0; i < j; ++i) {
+            if (a.compare(delimiters[i]) == 0) {
+                return;
+            }
         }
     }
     delimiters.push_back(a);
@@ -345,11 +362,12 @@ void Stack::pushDelimiter(std::string a)
 
 void Stack::pushSyntaxError(std::string a)
 {
-    for(int i = 0; i < syntaxErrors.size(); ++i)
-    {
-        if(a.compare(syntaxErrors[i]) == 0)
-        {
-            return;
+    if(syntaxErrors.size() > 0) {
+        int j = syntaxErrors.size();
+        for (int i = 0; i < j; ++i) {
+            if (a.compare(syntaxErrors[i]) == 0) {
+                return;
+            }
         }
     }
     syntaxErrors.push_back(a);
