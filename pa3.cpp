@@ -20,9 +20,32 @@
 
 Stack::Stack() = default;
 
-void Stack::addDepth()
+void Stack::calcDepth()
 {
-    depth++;
+    int max = 0;
+    if(numFor > max)
+        max = numFor;
+    if(numBegin > max)
+        max = numBegin;
+    if(numEnd > max)
+        max = numEnd;
+    int min = max;
+    if(numFor < max)
+        Stack::pushSyntaxError("FOR");
+    if(numFor < min)
+        min = numFor;
+    if(numBegin < max)
+        Stack::pushSyntaxError("BGEIN");
+    if(numBegin < min)
+        min = numBegin;
+    if(numEnd < max)
+        Stack::pushSyntaxError("END");
+    if(numEnd < min)
+        min = numEnd;
+
+    depth += min;
+    if(depth < 0)
+        depth = 0;
 }
 
 int Stack::getDepth()
@@ -36,9 +59,6 @@ int Stack::getDepth()
  */
 void Stack::push(std::string a)
 {
-    //bool hasAParen = false;
-    //int hasBegin = 0;
-
     // Check to see if the string is a constant
     bool isNotNum = false;
     for(int i = 0; i < a.length(); i++)
@@ -52,6 +72,31 @@ void Stack::push(std::string a)
     if(!isNotNum)
     {
         Stack::pushConstant(a);
+        if(lastIsFor)
+        {
+            lastIsFor = false;
+            Stack::pushSyntaxError("(");
+            depth--;
+        }
+    }
+
+    // Check to see if the string is a paren
+    else if(a.compare("(") == 0)
+    {
+        lastIsFor = false;
+        hasOpenParen = true;
+    }
+    else if(a.compare(")") == 0)
+    {
+        if(!hasOpenParen){
+            Stack::pushSyntaxError(a);
+            depth--;
+        }
+        if(hasCloseParen){
+            Stack::pushSyntaxError(a);
+            depth--;
+        }
+        hasCloseParen = true;
     }
 
     // Check to see if the string is a delimiter
@@ -67,14 +112,37 @@ void Stack::push(std::string a)
             || (a.compare("==") == 0) || (a.compare("!=") == 0))
     {
         Stack::pushOperator(a);
+        if(lastIsFor)
+        {
+            lastIsFor = false;
+            Stack::pushSyntaxError("(");
+            depth--;
+        }
     }
 
     // Check to see if the string is a keyword
-    else if((a.compare("FOR") == 0) || (a.compare("For") == 0) || (a.compare("for") == 0)
-            || (a.compare("BEGIN") == 0) || (a.compare("Begin") == 0) || (a.compare("begin") == 0)
-            || (a.compare("END") == 0) || (a.compare("End") == 0) || (a.compare("end") == 0))
+    else if((a.compare("FOR") == 0) || (a.compare("For") == 0) || (a.compare("for") == 0))
     {
         Stack::pushKeyword(a);
+        lastIsFor = true;
+        numFor++;
+    }
+    else if((a.compare("BEGIN") == 0) || (a.compare("Begin") == 0) || (a.compare("begin") == 0))
+    {
+        // Check to see if there is a )
+        if(!hasCloseParen) {
+            Stack::pushSyntaxError(")");
+            depth--;
+        }
+        hasCloseParen = false;
+        Stack::pushKeyword(a);
+        lastIsFor = false;
+        numBegin++;
+    }
+    else if((a.compare("END") == 0) || (a.compare("End") == 0) || (a.compare("end") == 0))
+    {
+        Stack::pushKeyword(a);
+        lastIsFor = false;
     }
 
     // Check to see if the string is a syntax error
@@ -84,6 +152,12 @@ void Stack::push(std::string a)
     else
     {
         Stack::pushIdentifier(a);
+        if(lastIsFor)
+        {
+            lastIsFor = false;
+            Stack::pushSyntaxError("(");
+            depth--;
+        }
     }
 }
 
@@ -231,11 +305,63 @@ int Stack::getSyntaxErrorSize()
     return static_cast<int>(syntaxErrors.size());
 }
 
-/*static void PA3::printOutput(Stack * theStack)
+/*
+ *  Main will get the file name from the user.
+ *  It will the check to see if it is a valid file.
+ *  If it is, it will continue. Otherwise, it will
+ *  give an error and terminate the program. It then
+ *  reads the file that was opened and calls the push
+ *  method from the Stack class to add the input to
+ *  the Stack.
+ */
+int main()
 {
+    // Get the file from the user
+    std::string fn;
+    std::cout << "INPUT> Please enter the name of the input file:\n";
+    std::cin >> fn;
+    std::ifstream theFile(fn);
+
+    // Check to see if the file is valid.
+    if(!theFile)
+    {
+        std::cerr << "The file could not be opened\n";
+        return 1;
+    }
+
+    // Read the file to the Stack
+    Stack * theStack = new Stack();
+    // The while loop checks to see if there is something
+    // else to read from the file.
+    std::string toPush = "";
+    std::string theWord = " ";
+    while(theFile >> theWord)
+    {
+        //std::cout << aLine << "\n";
+        char c;
+        int i=0;
+        char str[] = {};
+        std::string aWord = theWord;
+        strcpy(str, aWord.c_str());     //This line causes an error because it deletes the reference and the next time around it gives a seg fault
+        while(str[i])
+        {
+            c = str[i];
+            toPush.push_back(c);
+            i++;
+        }
+        theStack->push(toPush);
+    }
+
+    // Closing the file
+    theFile.close();
+
+    // Calculating the depth
+    theStack->calcDepth();
+
+    // Printing the output
     // Depth
     std::cout << "OUTPUT> The depth of nested loop(s) is ";
-    std::cout << depth << "\n";
+    std::cout << theStack->getDepth() << "\n";
 
     // Keywords
     std::cout << "Keywords: ";
@@ -302,60 +428,6 @@ int Stack::getSyntaxErrorSize()
         }
     }
     std::cout << "\n";
-}
-*/
-/*
- *  Main will get the file name from the user.
- *  It will the check to see if it is a valid file.
- *  If it is, it will continue. Otherwise, it will
- *  give an error and terminate the program. It then
- *  reads the file that was opened and calls the push
- *  method from the Stack class to add the input to
- *  the Stack.
- */
-int main()
-{
-    // Get the file from the user
-    std::string fn;
-    std::cout << "INPUT> Please enter the name of the input file:\n";
-    std::cin >> fn;
-    std::ifstream theFile(fn);
-
-    // Check to see if the file is valid.
-    if(!theFile)
-    {
-        std::cerr << "The file could not be opened\n";
-        return 1;
-    }
-
-    // Read the file to the Stack
-    Stack * theStack = new Stack();
-    // The while loop checks to see if there is something
-    // else to read from the file.
-    std::string toPush = "";
-    std::string theWord = " ";
-    while(theFile >> theWord)
-    {
-        //std::cout << aLine << "\n";
-        char c;
-        int i=0;
-        char str[] = {};
-        std::string aWord = theWord;
-        strcpy(str, aWord.c_str());     //This line causes an error because it deletes the reference and the next time around it gives a seg fault
-        while(str[i])
-        {
-            c = str[i];
-            toPush.push_back(c);
-            i++;
-        }
-        theStack->push(toPush);
-    }
-
-    // Closing the file
-    theFile.close();
-
-    // Printing the output
-    //PA3::printOutput(theStack);
 
     /*
      *  Testing:
