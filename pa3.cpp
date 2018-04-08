@@ -30,22 +30,21 @@ void Stack::calcDepth()
     if(numEnd > max)
         max = numEnd;
     int min = max;
-    if(numFor < max)
+    if((numFor < max) && !(forTypo))
         Stack::pushSyntaxError("FOR");
     if(numFor < min)
         min = numFor;
-    if(numBegin < max)
+    if((numBegin < max) && !(beginTypo))
         Stack::pushSyntaxError("BEGIN");
     if(numBegin < min)
         min = numBegin;
-    if(numEnd < max)
+    if((numEnd < max) && !(endTypo))
         Stack::pushSyntaxError("END");
     if(numEnd < min)
         min = numEnd;
 
-    depth += min;
-    if(depth < 0)
-        depth = 0;
+    if(depth < min)
+        depth = min;
 }
 
 int Stack::getDepth()
@@ -84,7 +83,7 @@ void Stack::push(std::string a)
             {
                 lastIsFor = false;
                 Stack::pushSyntaxError("(");
-                depth--;
+                //depth--;
             }
         }
             // Check to see if the string is a keyword
@@ -99,7 +98,7 @@ void Stack::push(std::string a)
             // Check to see if there is a )
             if(!hasCloseParen) {
                 Stack::pushSyntaxError(")");
-                depth--;
+                //depth--;
             }
             hasCloseParen = false;
             Stack::pushKeyword(a);
@@ -110,6 +109,7 @@ void Stack::push(std::string a)
         {
             Stack::pushKeyword(a);
             lastIsFor = false;
+            ++numEnd;
         }
 
         // Check to see if the string is an operator
@@ -121,7 +121,7 @@ void Stack::push(std::string a)
             {
                 lastIsFor = false;
                 Stack::pushSyntaxError("(");
-                depth--;
+                //depth--;
             }
         }
 
@@ -161,6 +161,49 @@ void Stack::push(std::string a)
                 Stack::push(a.substr(find+1, a.size()-find));
             }
         }
+
+        // Check to see is the string is a typo
+        else if(a.size() == 3)
+        {
+            bool typo = true;
+            for(int i = 0; i < a.size(); i++)
+            {
+                if(!(isupper(a[i])))
+                {
+                    typo = false;
+                    break;
+                }
+            }
+            if(typo)
+            {
+                Stack::pushSyntaxError(a);
+                if((a[1] == 'f') || a[1] == 'F')
+                    forTypo = true;
+                else if((a[1] == 'e') || a[1] == 'E')
+                    endTypo = true;
+            }
+            else
+                Stack::pushIdentifier(a);
+        }
+        else if(a.size() == 5)
+        {
+            bool typo = true;
+            for(int i = 0; i < a.size(); i++)
+            {
+                if(!(isupper(a[i])))
+                {
+                    typo = false;
+                    break;
+                }
+            }
+            if(typo)
+            {
+                Stack::pushSyntaxError(a);
+                beginTypo = true;
+            }
+            else
+                Stack::pushIdentifier(a);
+        }
         // Check to see if the string is an identifier
         else
         {
@@ -169,7 +212,7 @@ void Stack::push(std::string a)
             {
                 lastIsFor = false;
                 Stack::pushSyntaxError("(");
-                depth--;
+                //depth--;
             }
         }
     }
@@ -186,7 +229,7 @@ void Stack::push(std::string a)
             if (lastIsFor) {
                 lastIsFor = false;
                 Stack::pushSyntaxError("(");
-                depth--;
+                //depth--;
             }
         }
 
@@ -200,11 +243,11 @@ void Stack::push(std::string a)
         {
             if(!hasOpenParen){
                 Stack::pushSyntaxError(a);
-                depth--;
+                //depth--;
             }
             if(hasCloseParen){
                 Stack::pushSyntaxError(a);
-                depth--;
+                //depth--;
             }
             hasCloseParen = true;
         }
@@ -224,7 +267,7 @@ void Stack::push(std::string a)
             {
                 lastIsFor = false;
                 Stack::pushSyntaxError("(");
-                depth--;
+                //depth--;
             }
         }
 
@@ -236,7 +279,7 @@ void Stack::push(std::string a)
             {
                 lastIsFor = false;
                 Stack::pushSyntaxError("(");
-                depth--;
+                //depth--;
             }
         }
     }
@@ -414,7 +457,6 @@ int main()
     Stack * theStack = new Stack();
     // The while loop checks to see if there is something
     // else to read from the file.
-    std::string toPush = "";
     std::string theWord = " ";
     while(theFile >> theWord)
     {
@@ -430,7 +472,7 @@ int main()
     // Printing the output
     // Depth
     std::cout << "OUTPUT> The depth of nested loop(s) is ";
-    std::cout << theStack->getDepth() << "\n";
+    std::cout << theStack->getDepth() << "\n\n";
 
     // Keywords
     std::cout << "Keywords: ";
@@ -490,7 +532,7 @@ int main()
             std::cout << theStack->popDelimiter() << " ";
         }
     }
-    std::cout << "\n";
+    std::cout << "\n\n";
 
     // Syntax Errors
     std::cout << "Syntax Error(s): ";

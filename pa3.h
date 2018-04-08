@@ -4,12 +4,12 @@ class Stack
 {
 private:
     int depth = 0;
-    //const std::string KEYWORDSlist[3] = {"BEGIN", "END", "FOR"};
-    //const std::string OPERATORSlist[7] = {"+", "-", "*", "/", "++", "=", "=="};
-    //const std::string DELIMITERSlist[2] = {",", ";"};
     bool hasOpenParen = false;
     bool hasCloseParen = false;
     bool lastIsFor = false;
+    bool beginTypo = false;
+    bool endTypo = false;
+    bool forTypo = false;
     int numBegin = 0;
     int numEnd = 0;
     int numFor = 0;
@@ -43,3 +43,21 @@ public:
     int getDelimiterSize();
     int getSyntaxErrorSize();
 };
+/*
+class Loopy
+{
+private:
+    bool hasFor;
+    bool hasOpenParen;
+    bool hasCloseParen;
+    bool hasBegin;
+    bool hasEnd;
+    bool valid;
+public:
+    void setFor(bool a);
+    void setOpenParen(bool a);
+    void setCloseParen(bool a);
+    void setBegin(bool a);
+    void setEnd(bool a);
+};
+ */
