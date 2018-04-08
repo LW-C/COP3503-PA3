@@ -35,7 +35,7 @@ void Stack::calcDepth()
     if(numFor < min)
         min = numFor;
     if(numBegin < max)
-        Stack::pushSyntaxError("BGEIN");
+        Stack::pushSyntaxError("BEGIN");
     if(numBegin < min)
         min = numBegin;
     if(numEnd < max)
@@ -163,11 +163,11 @@ void Stack::push(std::string a)
 
 void Stack::pushKeyword(std::string a)
 {
-    for(int i = 0; i < keywords.size(); ++i)
-    {
-        if(a.compare(keywords[i]) == 0)
-        {
-            return;
+    if(keywords.size() > 0) {
+        for (int i = 0; i < keywords.size(); ++i) {
+            if (a.compare(keywords[i]) == 0) {
+                return;
+            }
         }
     }
     keywords.push_back(a);
@@ -337,14 +337,15 @@ int main()
     std::string theWord = " ";
     while(theFile >> theWord)
     {
-        //std::cout << aLine << "\n";
-        char c;
+        std::cout << theWord << "\n";
+        /*char c;
         for(int j = 0; j < theWord.size(); j++)
         {
             c = theWord[j];
             toPush.push_back(c);
-        }
-        theStack->push(toPush);
+        }*/
+        //theStack->push(toPush);
+        theStack->push(theWord);
     }
 
     // Closing the file
@@ -363,7 +364,8 @@ int main()
     if (theStack->getKeywordSize() == 0)
         std::cout << "NA";
     else {
-        for (int i = 0; i < theStack->getKeywordSize(); i++) {
+        int j = theStack->getKeywordSize();
+        for (int i = 0; i < j; i++) {
             std::cout << theStack->popKeyword() << " ";
         }
     }
@@ -374,7 +376,8 @@ int main()
     if (theStack->getIdentifierSize() == 0)
         std::cout << "NA";
     else {
-        for (int i = 0; i < theStack->getIdentifierSize(); i++) {
+        int j = theStack->getIdentifierSize();
+        for (int i = 0; i < j; i++) {
             std::cout << theStack->popIdentifier() << " ";
         }
     }
@@ -385,7 +388,8 @@ int main()
     if (theStack->getConstantSize() == 0)
         std::cout << "NA";
     else {
-        for (int i = 0; i < theStack->getConstantSize(); i++) {
+        int j = theStack->getConstantSize();
+        for (int i = 0; i < j; i++) {
             std::cout << theStack->popConstant() << " ";
         }
     }
@@ -396,7 +400,8 @@ int main()
     if (theStack->getOperatorSize() == 0)
         std::cout << "NA";
     else {
-        for (int i = 0; i < theStack->getOperatorSize(); i++) {
+        int j = theStack->getOperatorSize();
+        for (int i = 0; i < j; i++) {
             std::cout << theStack->popOperator() << " ";
         }
     }
@@ -407,7 +412,8 @@ int main()
     if (theStack->getDelimiterSize() == 0)
         std::cout << "NA";
     else {
-        for (int i = 0; i < theStack->getDelimiterSize(); i++) {
+        int j = theStack->getDelimiterSize();
+        for (int i = 0; i < j; i++) {
             std::cout << theStack->popDelimiter() << " ";
         }
     }
@@ -418,7 +424,8 @@ int main()
     if (theStack->getSyntaxErrorSize() == 0)
         std::cout << "NA";
     else {
-        for (int i = 0; i < theStack->getSyntaxErrorSize(); i++) {
+        int j = theStack->getSyntaxErrorSize();
+        for (int i = 0; i < j; i++) {
             std::cout << theStack->popSyntaxError() << " ";
         }
     }
